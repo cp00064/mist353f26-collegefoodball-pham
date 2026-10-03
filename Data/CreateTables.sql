@@ -44,6 +44,7 @@ create TABLE Team (
     TeamID int not null identity(1,1),
     UniversityName varchar(100) not NULL,
     TeamName varchar(100) not NULL,
+    stadiumID int not NULL,
     constraint PK_Team primary key (TeamID),
     constraint UQ_UniversityName unique (UniversityName),
     constraint FK_Team_Stadium foreign key (StadiumID) references Stadium(StadiumID),
@@ -72,3 +73,4 @@ CREATE TABLE Game (
     constraint FK_Game_WinnerTeam foreign key (WinnerTeamID) references Team(TeamID),
     constraint FK_Game_Stadium foreign key (StadiumID) references Stadium(StadiumID)
 );
+
