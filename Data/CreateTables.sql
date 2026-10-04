@@ -14,11 +14,30 @@ ALTER ROLE db_owner ADD MEMBER NandaSurendra;
 
 */
 
+if object_id('Player', 'U') is not null
+    drop table Player;
+if object_id('Roster', 'U') is not null
+    drop table Roster;
+if object_id('PlayerStats', 'U') is not null
+    drop table PlayerStats;
+if object_id('QBStats', 'U') is not null
+    drop table QBStats;
+if object_id('RBStats', 'U') is not null
+    drop table RBStats;
+if object_id('DefenderStats', 'U') is not null
+    drop table DefenderStats;
+if object_id('ReturnerStats', 'U') is not null
+    drop table ReturnerStats;
+if object_id('KickerStats', 'U') is not null
+    drop table KickerStats;
+if object_id('PunterStats', 'U') is not null
+    drop table PunterStats;
 
-if object_id('Team', 'U') is not null
-    drop table Team;
 if object_id('Game', 'U') is not null
     drop table Game;
+if object_id('Team', 'U') is not null
+    drop table Team;
+
 if object_id('Stadium', 'U') is not null
     drop table Stadium;
 
@@ -74,3 +93,116 @@ CREATE TABLE Game (
     constraint FK_Game_Stadium foreign key (StadiumID) references Stadium(StadiumID)
 );
 
+
+ 
+ create table Player (
+    PlayerID int not null identity(1,1),
+    PlayerName varchar(100) not NULL,
+    PlayerDateOfBirth date not NULL,
+    constraint PK_Player primary key (PlayerID)
+);
+
+go
+ 
+ 
+
+ create table Roster (
+    RosterID int not null identity(1,1),
+    Year int not NULL,
+    SeasonWins int not NULL,
+    SeasonLosses int not NULL,
+    SeasonTies int not NULL,
+    TeamID int not NULL,
+    constraint PK_Roster primary key (RosterID),
+
+    constraint FK_Roster_Team foreign key (TeamID) references Team(TeamID)
+ )
+
+
+go
+
+
+create table PlayerStats(
+    PlayerStatsID int not null identity(1,1),
+    Position varchar(100) not NULL,
+    constraint PK_PlayerStats primary key (PlayerStatsID),
+    constraint UQ_PlayerStats_Position unique (Position)
+
+
+)
+
+go
+
+
+create table QBStats(
+    QBStatsID int not null identity(1,1),
+    Attempts int not NULL,
+    Completions int not NULL,
+    Yards int not NULL,
+    TDs int not NULL,
+    INTs int not NULL,
+    constraint PK_QBStats primary key (QBStatsID)
+)
+
+go
+
+create table RBStats(
+    RBStatsID int not null identity(1,1),
+    Carries int not NULL,
+    Yards int not NULL,
+    TDs int not NULL,
+    Long int not NULL,
+    Fumbles int not NULL,
+    constraint PK_RBStats primary key (RBStatsID)
+)
+
+go
+
+create table DefenderStats(
+    DefenderStatsID int not null identity(1,1),
+    Tackles int not NULL,
+    Sacks int not NULL,
+    Interceptions int not NULL,
+    DefensiveTDs int not NULL,
+    constraint PK_DefenderStats primary key (DefenderStatsID)
+)
+
+
+go
+
+create table ReturnerStats(
+    ReturnerStatsID int not null identity(1,1),
+    KickoffAttempts int not NULL,
+    KickoffYards int not NULL,
+    KickoffLong int not NULL,
+    KickoffTDs int not NULL,
+    PuntReturnsAttemps int not NULL,
+    PuntReturnYards int not NULL,
+    PuntReturnLong int not NULL,
+    PuntReturnTDs int not NULL,
+    constraint PK_ReturnerStats primary key (ReturnerStatsID)
+)
+
+go
+
+create table KickerStats(
+    KickerStatsID int not null identity(1,1),
+    FieldGoalsAttempted int not NULL,
+    FieldGoalsMade int not NULL,
+    ExtraPointsAttempted int not NULL,
+    ExtraPointsMade int not NULL,
+    Long int not NULL,
+    constraint PK_KickerStats primary key (KickerStatsID)
+)
+
+go
+
+create table PunterStats(
+    PunterStatsID int not null identity(1,1),
+    Punts int not NULL,
+    PuntYards int not NULL,
+    PuntLong int not NULL,
+    constraint PK_PunterStats primary key (PunterStatsID)
+)
+
+go
