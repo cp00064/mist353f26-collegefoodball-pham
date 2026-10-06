@@ -35,6 +35,8 @@ if object_id('PunterStats') is not null
 
 if object_id('Game') is not null
     drop table Game;
+if object_id('AppUserTeam') is not null
+    drop table AppUserTeam;
 if object_id('Team') is not null
     drop table Team;
 
@@ -43,6 +45,8 @@ if object_id('Stadium') is not null
 
 if object_id('AppUser') is not null
     drop table AppUser;
+
+
 
 
 
