@@ -41,6 +41,9 @@ if object_id('Team') is not null
 if object_id('Stadium') is not null
     drop table Stadium;
 
+if object_id('AppUser') is not null
+    drop table AppUser;
+
 
 
 create table Stadium(
@@ -92,6 +95,19 @@ CREATE TABLE Game (
     constraint FK_Game_WinnerTeam foreign key (WinnerTeamID) references Team(TeamID),
     constraint FK_Game_Stadium foreign key (StadiumID) references Stadium(StadiumID)
 );
+
+create table AppUser(
+    AppUserID int not null identity(1,1),
+    FirstName varchar(100) not NULL,
+    LastName varchar(100) not NULL,
+    Email varchar(100) not NULL,
+    UserPassword varchar(100) not NULL,
+    constraint PK_AppUser primary key (AppUserID),
+    constraint UQ_AppUser_Email unique (Email)
+);
+
+go
+
 
 
  
