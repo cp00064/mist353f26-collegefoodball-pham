@@ -109,6 +109,16 @@ create table AppUser(
 go
 
 
+create table AppUserTeam(
+    AppUserID int not NULL,
+    TeamID int not NULL,
+    constraint PK_AppUserTeam primary key (AppUserID, TeamID),
+    constraint FK_AppUserTeam_AppUser foreign key (AppUserID) references AppUser(AppUserID),
+    constraint FK_AppUserTeam_Team foreign key (TeamID) references Team(TeamID)
+);
+
+go
+
 
  
  create table Player (
