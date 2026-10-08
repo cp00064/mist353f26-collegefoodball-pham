@@ -13,15 +13,18 @@ ALTER ROLE db_owner ADD MEMBER NandaSurendra;
 
 
 */
-
+if object_id('QBStats') is not null
+    drop table QBStats;
+if object_id('WeeklyPredictionResults') is not null
+    drop table WeeklyPredictionResults;
+if object_id('PlayerStats') is not null
+    drop table PlayerStats;
 if object_id('Player') is not null
     drop table Player;
 if object_id('Roster') is not null
     drop table Roster;
-if object_id('PlayerStats') is not null
-    drop table PlayerStats;
-if object_id('QBStats') is not null
-    drop table QBStats;
+
+
 if object_id('RBStats') is not null
     drop table RBStats;
 if object_id('DefenderStats') is not null
@@ -124,6 +127,15 @@ create table AppUserTeam(
 go
 
 
+create table WeeklyPredictionResults(
+    WeeklyPredictionResultsID int not null identity(1,1),
+    startDate date not NULL default getdate(),
+    numberOfCorrectPredictions int not NULL default 0,
+    appUserID int not NULL,
+    constraint PK_WeeklyPredictionResults primary key (WeeklyPredictionResultsID),
+    constraint FK_WeeklyPredictionResults_AppUser foreign key (appUserID) references AppUser(AppUserID)
+);
+
  
  create table Player (
     PlayerID int not null identity(1,1),
@@ -156,6 +168,8 @@ create table PlayerStats(
     PlayerStatsID int not null identity(1,1),
     Position varchar(100) not NULL,
     constraint PK_PlayerStats primary key (PlayerStatsID),
+    constraint Fk_PlayerStats_Roster foreign key (PlayerStatsID) references Roster(RosterID),
+    constraint Fk_PlayerStats_Player foreign key (PlayerStatsID) references Player(PlayerID),
     constraint UQ_PlayerStats_Position unique (Position)
 
 
@@ -171,7 +185,9 @@ create table QBStats(
     Yards int not NULL,
     TDs int not NULL,
     INTs int not NULL,
-    constraint PK_QBStats primary key (QBStatsID)
+    constraint PK_QBStats primary key (QBStatsID),
+    constraint FK_QBStats_PlayerStats foreign key (QBStatsID) references PlayerStats(PlayerStatsID)
+
 )
 
 go
