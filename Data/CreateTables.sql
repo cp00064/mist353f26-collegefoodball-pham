@@ -13,6 +13,12 @@ ALTER ROLE db_owner ADD MEMBER NandaSurendra;
 
 
 */
+if object_id('Position') is not null
+    drop table Position;
+if object_id('Coach') is not null
+    drop table Coach;
+if object_id('GamePrediction') is not null
+    drop table GamePrediction;
 if object_id('QBStats') is not null
     drop table QBStats;
 if object_id('WeeklyPredictionResults') is not null
@@ -127,6 +133,20 @@ create table AppUserTeam(
 go
 
 
+create table GamePrediction(
+    
+    GamePredictionID int not null identity(1,1),
+    PredictionDateTime datetime not NULL default getdate(),
+    GameID int not NULL,
+    AppUserID int not NULL,
+    TeamID int not NULL,
+    constraint PK_GamePrediction primary key (GamePredictionID),
+    constraint FK_GamePrediction_Game foreign key (GameID) references Game(GameID),
+    constraint FK_GamePrediction_AppUser foreign key (AppUserID) references AppUser(AppUserID),
+    constraint FK_GamePrediction_PredictedWinnerTeam foreign key (TeamID) references Team(TeamID)
+);
+
+
 create table WeeklyPredictionResults(
     WeeklyPredictionResultsID int not null identity(1,1),
     startDate date not NULL default getdate(),
@@ -146,6 +166,14 @@ create table WeeklyPredictionResults(
 
 go
  
+
+ create table Position(
+    
+    PositionID int not null identity(1,1),
+    PositionName varchar(100) not NULL,
+    constraint PK_Position primary key (PositionID),
+    constraint UQ_PositionName unique (PositionName)
+ )
  
 
  create table Roster (
@@ -176,6 +204,13 @@ create table PlayerStats(
 )
 
 go
+
+
+create table Coach(
+    CoachID int not null identity(1,1),
+    CoachName varchar(100) not NULL,
+    constraint PK_Coach primary key (CoachID)
+)
 
 
 create table QBStats(
