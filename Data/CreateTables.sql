@@ -109,6 +109,8 @@ CREATE TABLE Game (
     constraint FK_Game_Stadium foreign key (StadiumID) references Stadium(StadiumID)
 );
 
+go 
+
 create table AppUser(
     AppUserID int not null identity(1,1),
     FirstName varchar(100) not NULL,
@@ -156,7 +158,8 @@ create table WeeklyPredictionResults(
     constraint FK_WeeklyPredictionResults_AppUser foreign key (appUserID) references AppUser(AppUserID)
 );
 
- 
+go
+
  create table Player (
     PlayerID int not null identity(1,1),
     PlayerName varchar(100) not NULL,
@@ -175,6 +178,7 @@ go
     constraint UQ_PositionName unique (PositionName)
  )
  
+ go
 
  create table Roster (
     RosterID int not null identity(1,1),
@@ -211,6 +215,10 @@ create table Coach(
     CoachName varchar(100) not NULL,
     constraint PK_Coach primary key (CoachID)
 )
+
+
+
+go
 
 
 create table QBStats(
