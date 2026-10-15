@@ -13,6 +13,9 @@ ALTER ROLE db_owner ADD MEMBER NandaSurendra;
 
 
 */
+
+if object_id('CoachRoster') is not null
+    drop table CoachRoster;
 if object_id('Conference') is not null
     drop table Conference;
 if object_id('PlayerPosition') is not null
@@ -227,6 +230,8 @@ go
 go
 
 
+
+
 create table PlayerStats(
     PlayerStatsID int not null identity(1,1),
     PlayerID int not NULL,
@@ -252,6 +257,15 @@ create table Coach(
 
 go
 
+
+create table CoachRoster(
+    CoachName varchar(100) not NULL,
+    CoachID int not NULL,
+    RosterID int not NULL,
+    constraint PK_CoachRoster primary key (CoachID, RosterID),
+    constraint FK_CoachRoster_Coach foreign key (CoachID) references Coach(CoachID),
+    constraint FK_CoachRoster_Roster foreign key (RosterID) references Roster(RosterID)
+)
 
 create table QBStats(
     QBStatsID int not null identity(1,1),
