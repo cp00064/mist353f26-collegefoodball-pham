@@ -13,6 +13,10 @@ ALTER ROLE db_owner ADD MEMBER NandaSurendra;
 
 
 */
+if object_id('Conference') is not null
+    drop table Conference;
+if object_id('PlayerPosition') is not null
+    drop table PlayerPosition;
 if object_id('Position') is not null
     drop table Position;
 if object_id('Coach') is not null
@@ -72,8 +76,19 @@ create table Stadium(
     constraint CK_TypeofField check (TypeofField in ('Grass', 'Turf', 'Artificial'))
 );
 
-    go
+ go
 
+
+
+create table Conference(
+    ConferenceID int not null identity(1,1),
+    ConferenceName varchar(100) not NULL,
+    constraint PK_Conference primary key (ConferenceID),
+    constraint UQ_ConferenceName unique (ConferenceName),
+
+);  
+
+go
 
 create TABLE Team (
     TeamID int not null identity(1,1),
@@ -164,7 +179,8 @@ go
     PlayerID int not null identity(1,1),
     PlayerName varchar(100) not NULL,
     PlayerDateOfBirth date not NULL,
-    constraint PK_Player primary key (PlayerID)
+    constraint PK_Player primary key (PlayerID),
+    constraint UQ_Player unique (PlayerName)
 );
 
 go
@@ -175,9 +191,24 @@ go
     PositionID int not null identity(1,1),
     PositionName varchar(100) not NULL,
     constraint PK_Position primary key (PositionID),
-    constraint UQ_PositionName unique (PositionName)
+    constraint UQ_PositionName unique (PositionName),
+    constraint CK_PositionName check (PositionName in ('QB', 'RB', 'WR', 'TE', 'OL', 'DL', 'LB', 'CB', 'S', 'K', 'P', 'RS'))
  )
  
+ go
+
+
+
+ create table PlayerPosition(
+    PlayerID int not NULL,
+    PositionID int not NULL,
+    PlayerPositionID int not null identity(1,1),
+    constraint PK_PlayerPosition primary key (PlayerID, PositionID),
+    constraint FK_PlayerPosition_Player foreign key (PlayerID) references Player(PlayerID),
+    constraint FK_PlayerPosition_Position foreign key (PositionID) references Position(PositionID)
+    
+ )
+
  go
 
  create table Roster (
@@ -188,7 +219,7 @@ go
     SeasonTies int not NULL,
     TeamID int not NULL,
     constraint PK_Roster primary key (RosterID),
-
+    constraint UQ_Roster unique (Year, TeamID),
     constraint FK_Roster_Team foreign key (TeamID) references Team(TeamID)
  )
 
@@ -198,11 +229,12 @@ go
 
 create table PlayerStats(
     PlayerStatsID int not null identity(1,1),
-    Position varchar(100) not NULL,
+    PlayerID int not NULL,
+    RosterID int not NULL,
     constraint PK_PlayerStats primary key (PlayerStatsID),
     constraint Fk_PlayerStats_Roster foreign key (PlayerStatsID) references Roster(RosterID),
     constraint Fk_PlayerStats_Player foreign key (PlayerStatsID) references Player(PlayerID),
-    constraint UQ_PlayerStats_Position unique (Position)
+    constraint UQ_PlayerStats_Roster unique (RosterID)
 
 
 )
