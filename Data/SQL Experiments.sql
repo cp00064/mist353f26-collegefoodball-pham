@@ -1,3 +1,4 @@
+select SYSDATETIMEOFFSET() at time zone 'US Eastern Standard Time' as EasternTime;
 select * from PlayerStats;
 
 select * from Roster;
@@ -8,7 +9,9 @@ go
 
 insert into Conference(ConferenceName) values ('Big 12');
 
-insert into Team(UniversityName, TeamName, StadiumID) values ('West Virginia University', 'Mountaineers', 1);
+insert into Stadium(StadiumName, StadiumCapacity, StadiumStreetAddress, StadiumCity, StadiumState, TypeofField) values ('Mountaineer Field at Milan Puskar Stadium', 60000, '1 Mountaineer Field Drive', 'Morgantown', 'WV', 'Grass');
+
+insert into Team(UniversityName, TeamName, conferenceID) values ('West Virginia University', 'Mountaineers', 1);
 
 insert into Player(PlayerName, PlayerDateOfBirth) values ('John Doe', '1990-01-01');
 

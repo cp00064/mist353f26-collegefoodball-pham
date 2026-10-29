@@ -13,64 +13,47 @@ ALTER ROLE db_owner ADD MEMBER NandaSurendra;
 
 
 */
+-- Cap 1: cac bang stats con (tro ve PlayerStats)
+if object_id('QBStats', 'U') is not null drop table QBStats;
+if object_id('RBStats', 'U') is not null drop table RBStats;
+if object_id('DefenderStats', 'U') is not null drop table DefenderStats;
+if object_id('ReturnerStats', 'U') is not null drop table ReturnerStats;
+if object_id('KickerStats', 'U') is not null drop table KickerStats;
+if object_id('PunterStats', 'U') is not null drop table PunterStats;
 
-if object_id('CoachRoster') is not null
-    drop table CoachRoster;
-if object_id('Conference') is not null
-    drop table Conference;
-if object_id('PlayerPosition') is not null
-    drop table PlayerPosition;
-if object_id('Position') is not null
-    drop table Position;
-if object_id('Coach') is not null
-    drop table Coach;
-if object_id('GamePrediction') is not null
-    drop table GamePrediction;
-if object_id('QBStats') is not null
-    drop table QBStats;
-if object_id('WeeklyPredictionResults') is not null
-    drop table WeeklyPredictionResults;
-if object_id('PlayerStats') is not null
-    drop table PlayerStats;
-if object_id('Player') is not null
-    drop table Player;
-if object_id('Roster') is not null
-    drop table Roster;
+-- Cap 2: bang trung gian / association class
+if object_id('PlayerStats', 'U') is not null drop table PlayerStats;
+if object_id('PlayerPosition', 'U') is not null drop table PlayerPosition;
+if object_id('CoachRoster', 'U') is not null drop table CoachRoster;
+if object_id('RosterCoach', 'U') is not null drop table RosterCoach;
+if object_id('GamePrediction', 'U') is not null drop table GamePrediction;
+if object_id('WeeklyPredictionResults', 'U') is not null drop table WeeklyPredictionResults;
+if object_id('AppUserTeam', 'U') is not null drop table AppUserTeam;
 
+-- Cap 3
+if object_id('Roster', 'U') is not null drop table Roster;
+if object_id('Player', 'U') is not null drop table Player;
+if object_id('Position', 'U') is not null drop table Position;
+if object_id('Coach', 'U') is not null drop table Coach;
+if object_id('Game', 'U') is not null drop table Game;
+if object_id('AppUser', 'U') is not null drop table AppUser;
 
-if object_id('RBStats') is not null
-    drop table RBStats;
-if object_id('DefenderStats') is not null
-    drop table DefenderStats;
-if object_id('ReturnerStats') is not null
-    drop table ReturnerStats;
-if object_id('KickerStats') is not null
-    drop table KickerStats;
-if object_id('PunterStats') is not null
-    drop table PunterStats;
-
-if object_id('Game') is not null
-    drop table Game;
-if object_id('AppUserTeam') is not null
-    drop table AppUserTeam;
-if object_id('Team') is not null
-    drop table Team;
-
-if object_id('Stadium') is not null
-    drop table Stadium;
-
-if object_id('AppUser') is not null
-    drop table AppUser;
+-- Cap 4: bang cha
+if object_id('WeeklyGamesOfInterest', 'U') is not null drop table WeeklyGamesOfInterest;
+if object_id('Team', 'U') is not null drop table Team;
+if object_id('Stadium', 'U') is not null drop table Stadium;
+if object_id('Conference', 'U') is not null drop table Conference;
 
 
 
+
+go
 
 
 create table Stadium(
     StadiumID int not null identity(1,1),
     StadiumName varchar(100) not NULL,
     StadiumCapacity int NOT NULL,
-    StadiumStreetAddress varchar(100) not NULL,
     StadiumCity varchar(100) not NULL,
     StadiumState varchar(100) NULL,
     TypeofField varchar(100) not NULL,
@@ -97,17 +80,28 @@ create TABLE Team (
     TeamID int not null identity(1,1),
     UniversityName varchar(100) not NULL,
     TeamName varchar(100) not NULL,
-    stadiumID int not NULL,
+    stadiumID int NULL,
+    conferenceID int not NULL,
     constraint PK_Team primary key (TeamID),
     constraint UQ_UniversityName unique (UniversityName),
     constraint FK_Team_Stadium foreign key (StadiumID) references Stadium(StadiumID),
-    
+    constraint FK_Team_Conference foreign key (conferenceID) references Conference(conferenceID)
 
 );
 
 
 go 
 
+
+
+create table WeeklyGamesOfInterest(
+    weeklyGamesOfInterestID int not null identity(1,1),
+    weekstartDate date,
+    constraint PK_WeeklyGamesOfInterest primary key (weeklyGamesOfInterestID),
+    constraint UQ_WeeklyGamesOfInterest unique (weekstartDate)
+);
+
+go 
 
 CREATE TABLE Game (
     GameID int not null identity(1,1),
@@ -119,12 +113,14 @@ CREATE TABLE Game (
     AwayTeamID int not NULL,
     WinnerTeamID int NULL,
     StadiumID int not NULL,
+    weeklyGamesOfInterestID int NULL,
     constraint PK_Game primary key (GameID),
     constraint UQ_Game unique (HomeTeamID, GameDate, GameTime),
     constraint FK_Game_HomeTeam foreign key (HomeTeamID) references Team(TeamID),
     constraint FK_Game_AwayTeam foreign key (AwayTeamID) references Team(TeamID),
     constraint FK_Game_WinnerTeam foreign key (WinnerTeamID) references Team(TeamID),
-    constraint FK_Game_Stadium foreign key (StadiumID) references Stadium(StadiumID)
+    constraint FK_Game_Stadium foreign key (StadiumID) references Stadium(StadiumID),
+    constraint FK_Game_WeeklyGamesOfInterest foreign key (WeeklyGamesOfInterestID) references WeeklyGamesOfInterest(WeeklyGamesOfInterestID)
 );
 
 go 
@@ -165,6 +161,8 @@ create table GamePrediction(
     constraint FK_GamePrediction_AppUser foreign key (AppUserID) references AppUser(AppUserID),
     constraint FK_GamePrediction_PredictedWinnerTeam foreign key (TeamID) references Team(TeamID)
 );
+
+go
 
 
 create table WeeklyPredictionResults(
@@ -327,7 +325,10 @@ create table KickerStats(
     ExtraPointsAttempted int not NULL,
     ExtraPointsMade int not NULL,
     Long int not NULL,
-    constraint PK_KickerStats primary key (KickerStatsID)
+    constraint PK_KickerStats primary key (KickerStatsID),
+    constraint FK_KickerStats_PlayerStats foreign key (KickerStatsID) references PlayerStats(PlayerStatsID),
+   
+    
 )
 
 go
