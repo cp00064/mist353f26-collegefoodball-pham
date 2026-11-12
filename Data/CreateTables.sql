@@ -179,7 +179,7 @@ go
  create table Player (
     PlayerID int not null identity(1,1),
     PlayerName varchar(100) not NULL,
-    PlayerDateOfBirth date not NULL,
+    PlayerDateOfBirth date NULL,
     constraint PK_Player primary key (PlayerID),
     constraint UQ_Player unique (PlayerName)
 );
@@ -235,9 +235,9 @@ create table PlayerStats(
     PlayerID int not NULL,
     RosterID int not NULL,
     constraint PK_PlayerStats primary key (PlayerStatsID),
-    constraint Fk_PlayerStats_Roster foreign key (PlayerStatsID) references Roster(RosterID),
-    constraint Fk_PlayerStats_Player foreign key (PlayerStatsID) references Player(PlayerID),
-    constraint UQ_PlayerStats_Roster unique (RosterID)
+    constraint Fk_PlayerStats_Roster foreign key (RosterID) references Roster(RosterID),
+    constraint Fk_PlayerStats_Player foreign key (PlayerID) references Player(PlayerID),
+    constraint UQ_PlayerStats_Roster unique (PlayerID, RosterID)
 
 
 )
